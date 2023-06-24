@@ -21,7 +21,7 @@ const int i2c_scl = 18;
 //FFT ANALYSIS
 #define DATA_SIZE 64
 int16_t data[DATA_SIZE];
-float FFT_threshold = 40.0;  ////////////// detection threshold  6 = 20
+float FFT_threshold = 15.0;  ////////////// detection threshold  6 = 20
 int trig = 1;
 int FFT_index = 0;
 bool triggered = false;
@@ -29,7 +29,7 @@ char off_counter = 0;
 
 
 //ESP NOW
-#define SENDER_ID 3    //////////////////// Sleeper identity 
+#define SENDER_ID 1    //////////////////// Sleeper identity 
 uint8_t broadcastAddress[] = {0x48,0x27,0xE2,0x50,0xCB,0x4E}; //{0x48,0x27,0xE2,0x50,0x76,0x82};  // {0x48,0x27,0xE2,0x50,0xCB,0x4E}; //(this last one is the original)
 
 // Structure to send data
@@ -193,11 +193,13 @@ void loop() {
       //Serial.println(myData.accelY);
 
       //if one of the touch pads is touched then send the info
+      
       if(touchRead(14) > (touch4_cal_value + touch_thres) || touchRead(13) > (touch3_cal_value + touch_thres) || touchRead(12) > (touch2_cal_value + touch_thres) || touchRead(11) > (touch1_cal_value + touch_thres)  ) {
         myData.touch = 1;
       } else {
         myData.touch = 0;
       }
+      //Serial.println(myData.touch);
       
       // Send message via ESP-NOW
       esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
